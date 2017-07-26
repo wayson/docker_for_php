@@ -6,4 +6,6 @@ How to enter the container:
 
 ``` bash
 docker-compose exec app php artisan key:generate
+
+ winpty docker exec -it php-container bash
 ```
