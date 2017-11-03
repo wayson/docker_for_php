@@ -23,6 +23,7 @@ app-data:
   container_name: app-data-container
   volumes:
     - ./www/html/:/var/www/html/
+    - ./www/html/:/app/
   command: "true"
 
 mysql:
@@ -52,3 +53,10 @@ phpmyadmin:
     - mysql
   environment:
     PMA_HOST: mysql
+
+composer:
+  restart: 'no'
+  image: composer/composer
+  command: install
+  volumes_from:
+    - app-data
