@@ -1,62 +1,76 @@
-nginx:
-  build: ./nginx/
-  container_name: nginx-container
-  ports:
-    - 80:80
-  links:
-    - php
-  volumes_from:
-    - app-data
+version: "2"
+services:
+  app-data:
+    image: php:7.0-fpm
+    container_name: app-data-container
+    volumes:
+      - ./www/flexibuzz-api-core:/var/www/html
+      - ./www/flexibuzz-api-core:/app
+    command: "true"
 
-php:
-  build: ./php/
-  container_name: php-container
-  expose:
-    - 9000
-  links:
-    - mysql
-  volumes_from:
-    - app-data
+  composer:
+    image: composer/composer
+    container_name: composer-container
+    volumes_from:
+      - app-data
+    command: "install"
 
-app-data:
-  image: php:7.0-fpm
-  container_name: app-data-container
-  volumes:
-    - ./www/html/:/var/www/html/
-    - ./www/html/:/app/
-  command: "true"
+  nginx:
+    build: ./nginx
+    container_name: nginx-container
+    ports:
+      - 80:80
+    volumes_from:
+      - app-data
 
-mysql:
-  image: mysql:latest
-  container_name: mysql-container
-  volumes_from:
-    - mysql-data
-  environment:
-    MYSQL_ROOT_PASSWORD: secret
-    MYSQL_DATABASE: test_db
-    MYSQL_USER: user
-    MYSQL_PASSWORD: password
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    volumes_from:
+      - mysql-data
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: flexibuzz
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret
 
-mysql-data:
-  image: mysql:latest
-  container_name: mysql-data-container
-  volumes:
-    - ./mysql-data/:/var/lib/mysql
-  command: "true"
+  mysql-data:
+    image: mysql:latest
+    container_name: mysql-data-container
+    volumes:
+      - ./mysql-data/:/var/lib/mysql
+    command: "true"
 
-phpmyadmin:
-  image: phpmyadmin/phpmyadmin
-  container_name: phpmyadmin-container
-  ports:
-    - 8080:80
-  links:
-    - mysql
-  environment:
-    PMA_HOST: mysql
+  php:
+    build: ./php/
+    container_name: php-container
+    expose:
+      - 9000
+    depends_on:
+      - "composer"
+    links:
+      - mysql
+    volumes_from:
+      - app-data
 
-composer:
-  restart: 'no'
-  image: composer/composer
-  command: install
-  volumes_from:
-    - app-data
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin-container
+    ports:
+      - 8000:80
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+
+  node:
+    build: ./node/
+    container_name: node-container
+    expose:
+      - 6001
+    links:
+      - php
+    ports:
+      - 6001:6001
+    volumes_from:
+      - app-data
