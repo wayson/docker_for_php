@@ -46,11 +46,33 @@ services:
     environment:
       MYSQL_DATABASE: homestead
       MYSQL_ROOT_PASSWORD: your_mysql_root_password
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     volumes:
       - dbdata:/var/lib/mysql/
       - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+  
+  #phpmyadmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+    tty: true
+    environment:
+     - PMA_ARBITRARY=1
+     - PMA_HOST=db
+     - PMA_PORT=3306
+     - PMA_USER=homestead
+     - PMA_PASSWORD=secret
+    restart: always
+    ports:
+     - 8080:80
+    volumes:
+     - /sessions
     networks:
       - app-network
 
