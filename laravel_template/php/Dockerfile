@@ -51,8 +51,6 @@ RUN buildDeps=" \
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-# Boost compose install speed
-RUN composer global require hirak/prestissimo
 
 # Add user for laravel application
 RUN groupadd -g 1000 www \
@@ -66,6 +64,9 @@ COPY --chown=www:www . /var/www
 
 # Change current user to www
 USER www
+
+# Boost compose install speed
+RUN composer global require hirak/prestissimo
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
