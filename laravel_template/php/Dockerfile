@@ -62,6 +62,9 @@ COPY . /var/www
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
 
+# Copy the initial start script
+COPY docker/start.sh /usr/local/bin/start
+
 # Change current user to www
 USER www
 

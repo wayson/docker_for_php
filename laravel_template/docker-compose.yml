@@ -13,12 +13,48 @@ services:
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
+      CONTAINER_ROLE: app
     working_dir: /var/www
     volumes:
       - ./project:/var/www
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network
+  
+  scheduler:
+    image: homestead/php
+    container_name: scheduler
+    restart: unless-stopped
+    tty: true
+    environment:
+      APP_ENV: local
+      CONTAINER_ROLE: scheduler
+    working_dir: /var/www
+    volumes:
+      - ./project:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    depends_on:
+      - app
+    networks:
+      - app-network
+  
+  queue:
+    image: homestead/php
+    container_name: queue
+    restart: unless-stopped
+    tty: true
+    environment:
+      APP_ENV: local
+      CONTAINER_ROLE: queue
+    working_dir: /var/www
+    volumes:
+      - ./project:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    depends_on:
+      - app
+    networks:
+      - app-network
+      
 
   #Redis service
   redis:
