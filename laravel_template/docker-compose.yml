@@ -16,7 +16,7 @@ services:
       CONTAINER_ROLE: app
     working_dir: /var/www
     volumes:
-      - ./project:/var/www
+      - ${WORKSPACE}:/var/www
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network
@@ -31,7 +31,7 @@ services:
       CONTAINER_ROLE: scheduler
     working_dir: /var/www
     volumes:
-      - ./project:/var/www
+      - ${WORKSPACE}:/var/www
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     depends_on:
       - app
@@ -48,7 +48,7 @@ services:
       CONTAINER_ROLE: queue
     working_dir: /var/www
     volumes:
-      - ./project:/var/www
+      - ${WORKSPACE}:/var/www
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     depends_on:
       - app

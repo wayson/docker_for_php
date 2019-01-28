@@ -63,7 +63,8 @@ COPY . /var/www
 COPY --chown=www:www . /var/www
 
 # Copy the initial start script
-COPY docker/start.sh /usr/local/bin/start
+COPY php/start.sh /usr/local/bin/start
+RUN chmod u+x /usr/local/bin/start
 
 # Change current user to www
 USER www
@@ -73,4 +74,5 @@ RUN composer global require hirak/prestissimo
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
-CMD ["php-fpm"]
+# CMD ["php-fpm"]
+CMD ["/usr/local/bin/start"]
