@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: ./php/Dockerfile
-    image: homestead/php
+    image: homestead/php:7.2
     container_name: app
     restart: unless-stopped
     tty: true
